@@ -166,5 +166,5 @@ spec:
 
 ```
 
-Now we can commit these and push the changes to the main branch. FluxCD will do the thing. 
+Now we can commit these and push the changes to the main branch. FluxCD will do the thing. As of now, ingressgateway is still not able to accept the traffic. We will configure this in a later section. 
 
