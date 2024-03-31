@@ -11,7 +11,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 
 1. [Deploying Kubernetes Cluster on Azure](kubernetes) 
 2. [Configuring FluxCD - Our GitOps tool](docs/fluxcd.md)
-3. Creating HelmRepositories
+3. [Creating HelmRepositories](docs/helmrepositories.md)
 4. Deploying Istio - Our service mesh
 5. Deploying Monitoring Tools
 6. CircleCI
