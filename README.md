@@ -24,7 +24,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 
 ## Contributing
 
-* Please feel free to contribute in anyway you can. It would be great to have more cloud-agnostic technology guides so that startups can benefit.
+* Please feel free to [contribute](https://github.com/ex-offenders/Cloud-Agnostic-Startup-Platform) in anyway you can. It would be great to have more cloud-agnostic technology guides so that startups can benefit.
 
 ## Contact
 
