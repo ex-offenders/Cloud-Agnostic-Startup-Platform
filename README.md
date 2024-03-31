@@ -17,7 +17,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 6. [CircleCI](docs/circleci.md)
 7. [Configuring Sealed-Secrets](docs/sealed-secrets.md)
 8. [Configuring Cert-Manager](docs/cert-manager.md)
-9. Configuring Istio Ingressgateway with Let's Encrypt
+9. [Configuring Istio Ingressgateway with Let's Encrypt](docs/ingressgateway.md)
 10. Keycloak, Istio and Let's Encrypt Certificate
 11. MinIO Deployment - Our object storage
 
