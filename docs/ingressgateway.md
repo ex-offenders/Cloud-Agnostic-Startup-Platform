@@ -169,4 +169,85 @@ spec:
 ```
 This routes the traffic receives by the gateway to the frontend service if the host maches with the above specification. 
 
-Merge the above changes, so that FluxCD can do the deployment
+Merge the above changes, so that FluxCD can do the deployment. Once the deployment is done, we are able to access the deployment via http://ex-offenders.co.uk endpoint. 
+
+## Let's Encrypt TLS Certificate
+
+Now let's create a certificate resource. 
+
+Directory structure
+```
+clusters
+--production
+----istio-system
+------certificate.yaml
+```
+Content of certificate.yaml
+```
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ex-offenders
+  namespace: istio-system
+spec:
+  secretName: ex-offenders-tls
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "ex-offenders.co.uk"
+    - "www.ex-offenders.co.uk"
+  issuerRef:
+    name: letsencrypt-prod-cluster
+    kind: ClusterIssuer
+    group: cert-manager.io
+```
+
+Once this is merged, cert-manager will create the certificate and store it in "ex-offenders-tls" secret. 
+
+We can see the progress with the following commands
+
+```
+kubectl get certificates -A
+kubectl get certificaterequets -A
+```
+Now that we have the certificate, we can modify the gateway resource. 
+
+Content of gateway.yaml
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - '*'
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: ex-offenders-tls
+      hosts:
+      - "www.ex-offenders.co.uk"
+      - "ex-offenders.co.uk"
+```
+
+
+Once the above changes are merged, we are able to access the deployment via https://ex-offenders.co.uk or https://www.ex-offenders.co.uk
