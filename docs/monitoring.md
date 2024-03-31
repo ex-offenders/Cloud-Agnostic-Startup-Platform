@@ -24,5 +24,5 @@ https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger
 https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
 https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
 ```
-
+Currently we access these ClusterIP services with port-forwarding. 
 We intend to convert these deployments into helmreleases soon. 
