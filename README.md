@@ -9,7 +9,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 ## Core Components
 ![Alt text](images/ex-offenders-platform.png?raw=true "Title")
 
-1. Deploying Kubernetes Cluster on Azure
+1. [Deploying Kubernetes Cluster on Azure](kubernetes) 
 2. Configuring FluxCD - Our GitOps tool
 3. Creating HelmRepositories
 4. Deploying Istio - Our service mesh
