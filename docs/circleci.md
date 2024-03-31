@@ -1,4 +1,4 @@
-# CircleCI Configuration
+# CircleCI
 
 Let's take a look at our deployment cicle. 
 1. We do code changes on a feature branch and that branch is merged to the main branch.
@@ -63,6 +63,7 @@ Above environment variables comes from CircleCI context called "registry".
 
 ## CircleCI Configuration
 
+![Alt text](../images/circleci.png?raw=true "Context")
 Where
 
 **AZURE_ACR_USERNAME** is the username of Azure Container Registry
