@@ -13,7 +13,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 2. [Configuring FluxCD - Our GitOps tool](docs/fluxcd.md)
 3. [Creating HelmRepositories](docs/helmrepositories.md)
 4. [Deploying Istio - Our service mesh](docs/istio.md)
-5. Deploying Monitoring Tools
+5. [Deploying Monitoring Tools](docs/monitoring.md)
 6. CircleCI
 7. Configuring Sealed-Secrets
 8. Configuring Cert-Manager
