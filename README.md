@@ -20,4 +20,5 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 9. [Configuring Istio Ingressgateway with Let's Encrypt](docs/ingressgateway.md)
 10. [Keycloak, Istio and Let's Encrypt Certificate](docs/keycloak.md)
 11. MinIO Deployment - Our object storage
+12. [Local Development Setup](docs/local.md)
 
