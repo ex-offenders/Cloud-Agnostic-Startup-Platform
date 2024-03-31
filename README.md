@@ -29,4 +29,5 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 ## Contact
 
 * Find me on [LinkedIn](https://www.linkedin.com/in/sajeeval)
-* Visit [Ex-Offenders](https://ex-offenders.co.uk) Platform. 
+* Visit [Ex-Offenders](https://ex-offenders.co.uk) Platform. (Work in progress)
+
