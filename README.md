@@ -22,3 +22,11 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 11. MinIO Deployment - Our object storage
 12. [Local Development Setup](docs/local.md)
 
+## Contributing
+
+* Please feel free to contribute in anyway you can. It would be great to have more cloud-agnostic technology guides so that startups can benefit.
+
+## Contact
+
+* Find me on [LinkedIn](https://www.linkedin.com/in/sajeeval)
+* Visit [Ex-Offenders](https://ex-offenders.co.uk) Platform. 
