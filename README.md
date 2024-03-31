@@ -10,13 +10,14 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 ![Alt text](images/ex-offenders-platform.png?raw=true "Title")
 
 1. Deploying Kubernetes Cluster on Azure
-2. Deploying Istio - Our service mesh
-3. Deploying Monitoring Tools
-5. Configuring FluxCD - Our GitOps tool
+2. Configuring FluxCD - Our GitOps tool
+3. Creating HelmRepositories
+4. Deploying Istio - Our service mesh
+5. Deploying Monitoring Tools
 6. CircleCI
-7. Creating HelmRepositories
-8. Configuring Sealed-Secrets
-9. Configuring Cert-Manager
-10. Configuring Istio Ingressgateway with Let's Encrypt
-11. Keycloak, Istio and Let's Encrypt Certificate
-12. MinIO Deployment - Our object storage
+7. Configuring Sealed-Secrets
+8. Configuring Cert-Manager
+9. Configuring Istio Ingressgateway with Let's Encrypt
+10. Keycloak, Istio and Let's Encrypt Certificate
+11. MinIO Deployment - Our object storage
+
