@@ -89,4 +89,57 @@ spec:
     crds: CreateReplace
 ```
 
+Push the above changes to the main branch of cluster-config repository and FluxCD will automatically do the sealed-secrets deployment
 
+## Validation
+
+Let's validate what we have done by creating an encrypted secret. 
+
+### Create a namespace. 
+Folder structure
+```
+clusters
+--production
+----test-namespace
+------namespace.yaml
+```
+Content of namespace.yaml
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-namespace
+```
+### Create a secret
+Create a secret in the test-namespace as follows
+```
+clusters
+--production
+----test-namespace
+------namespace.yaml
+------secret.yaml
+```
+
+Generate the content of secret.yaml as follows
+```
+kubectl create secret generic test-secret -n test-namespace --from-literal=password=password123 --dry-run=client -o yaml > secret.yaml
+```
+
+The content of secret.yaml
+```
+apiVersion: v1
+data:
+  password: cGFzc3dvcmQxMjM=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: test-secret
+  namespace: test-namespace
+```
+
+As you can see, the password value is base64 encoded, not encrypted. If we commit this file into the repository, anyone who has the access to the repository would be able to decode the secret as follows
+```
+echo -n "cGFzc3dvcmQxMjM=" |base64 -d
+```
+### Retrieving the public certificate
