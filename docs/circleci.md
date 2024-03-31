@@ -28,7 +28,7 @@ version: 2.1
 jobs:
   build-and-push:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:21.7.1
     steps:
       - setup_remote_docker
       - checkout
@@ -66,13 +66,8 @@ Above environment variables comes from CircleCI context called "registry".
 ![Alt text](../images/circleci.png?raw=true "Context")
 Where
 
-**AZURE_ACR_USERNAME** is the username of Azure Container Registry
-
-**AZURE_ACR_PASSWORD** is the password of Azure Container Registry
-
-**AZURE_ACR_LOGIN_SERVER** is the Azure Container Registry
-
-**CIRCLE_PROJECT_REPONAME** is a built-in environment variable. This is the name of the repository of the current project. 
-
-**CIRCLE_SHA1** is a built-in environment variable. This is the SHA1 hash of the last commit of the current build
-
+1. **AZURE_ACR_USERNAME** is the username of Azure Container Registry
+2. **AZURE_ACR_PASSWORD** is the password of Azure Container Registry
+3. **AZURE_ACR_LOGIN_SERVER** is the Azure Container Registry
+4. **CIRCLE_PROJECT_REPONAME** is a built-in environment variable. This is the name of the repository of the current project.
+5. **CIRCLE_SHA1** is a built-in environment variable. This is the SHA1 hash of the last commit of the current build
