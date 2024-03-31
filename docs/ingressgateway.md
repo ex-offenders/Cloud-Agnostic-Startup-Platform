@@ -28,6 +28,7 @@ clusters
 ------deployment.yaml
 ------service.yaml
 ------namespace.yaml
+------service-account.yaml
 ```
 Content of namespace.yaml
 
@@ -41,6 +42,16 @@ metadata:
 ```
 
 Note that, we have enabled istio-injection in this namespace as the traffic in and out of this namespace matter to us. 
+Also it is important to create service accounts for each application as it provides an identity for the pods in the service mesh. 
+
+Content of service-account.yaml
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: frontend
+  namespace: frontend
+```
 
 Content of deployment.yaml
 
@@ -51,8 +62,8 @@ metadata:
   creationTimestamp: null
   labels:
     app: nginx
-  name: nginx
-  namespace: keycloak
+  name: frontend
+  namespace: frontend
 spec:
   replicas: 1
   selector:
@@ -66,6 +77,7 @@ spec:
         app: nginx
     spec:
       containers:
+      serviceAccountName: frontend
       - image: nginx
         name: nginx
         resources: {}
@@ -79,8 +91,8 @@ kind: Service
 metadata:
   labels:
     app: nginx
-  name: nginx
-  namespace: keycloak
+  name: frontend
+  namespace: frontend
 spec:
   ports:
   - port: 8080
@@ -90,3 +102,71 @@ spec:
     app: nginx
   type: ClusterIP
 ```
+
+Merge above changes to the main branch of the cluster-config repository. FluxCD will do the deployment. 
+
+## Istio Configuration
+
+Now we need to create a gateway resource which describes how the load balancer at the edge of the mesh handles incoming traffic. 
+
+Directory structure
+```
+clusters
+--production
+----istio-system
+------gateway.yaml
+```
+
+Content of gateway.yaml
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - '*'
+```
+For now, we are allowing HTTP traffic until we create the certificate using Let's Encrypt CRDs. 
+
+In addition to that, we need a Virtual Service, which describes how the traffic is routed. 
+
+Directory structure
+```
+clusters
+--production
+----istio-system
+------gateway.yaml
+------virtual-service.yaml
+```
+Content of virtual-service.yaml
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: frontend
+  namespace: istio-system
+spec:
+  hosts:
+    - "www.ex-offenders.co.uk"
+    - "ex-offenders.co.uk"
+  gateways:
+    - gateway
+  http:
+    - route:
+        - destination:
+            host: frontend.frontend.svc.cluster.local
+            port:
+              number: 80
+```
+This routes the traffic receives by the gateway to the frontend service if the host maches with the above specification. 
+
+Merge the above changes, so that FluxCD can do the deployment
