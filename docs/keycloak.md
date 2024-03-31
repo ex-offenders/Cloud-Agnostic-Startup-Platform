@@ -376,4 +376,4 @@ spec:
       - "keycloak.ex-offenders.co.uk"
 ```
 
-With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk
+With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk. We will be adding URI prefixes to limit the exposed endpoints. 
