@@ -1,6 +1,7 @@
 # Keycloak Deployment
 
-Keycloak is an open-source identity and access management solution that enables secure authentication, authorization, and single sign-on for web applications and services. This document describes how we have deployed keycloak on kubernetes cluster and how we have exposed it via Istio ingressgateway. This may have overlooked some of the best practices during this implementation. We highly appreciate your feedback on this.
+Keycloak is an open-source identity and access management solution that enables secure authentication, authorization, and single sign-on for web applications and services. This document describes how we have deployed keycloak on kubernetes cluster and how we can expose it via Istio ingressgateway. Ideally this should sit inside the cluster with no public access. 
+It is possible that we may have overlooked some of the best practices during this deployment. We highly appreciate your feedback on this. 
 
 ## Create namespaces and SAs
 
