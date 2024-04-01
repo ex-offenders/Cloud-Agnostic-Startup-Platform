@@ -257,7 +257,7 @@ FluxCD can deploy the reources once the changes are merged into the main branch.
 
 ## DNS changes
 
-Now let's create a DNS entry to expose keycloak via ingressgateway.
+Now let's create a DNS entry to expose keycloak via ingressgateway. Please note that, ideally we do not want to expose our keycload deployment to the outside world. 
 
 Determine the ingressgateway public IP address. 
 
@@ -376,4 +376,4 @@ spec:
       - "keycloak.ex-offenders.co.uk"
 ```
 
-With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk. We will be adding URI prefixes to limit the exposed endpoints. 
+With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk. 
