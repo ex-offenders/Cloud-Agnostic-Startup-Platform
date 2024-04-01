@@ -1,6 +1,7 @@
 # Keycloak Deployment
 
-Keycloak is an open-source identity and access management solution that enables secure authentication, authorization, and single sign-on for web applications and services. This document describes how we have deployed keycloak on kubernetes cluster and how we have exposed it via Istio ingressgateway. This may have overlooked some of the best practices during this implementation. We highly appreciate your feedback on this.
+Keycloak is an open-source identity and access management solution that enables secure authentication, authorization, and single sign-on for web applications and services. This document describes how we have deployed keycloak on kubernetes cluster and how we can expose it via Istio ingressgateway. Ideally this should sit inside the cluster with no public access. 
+It is possible that we may have overlooked some of the best practices during this deployment. We highly appreciate your feedback on this. 
 
 ## Create namespaces and SAs
 
@@ -191,6 +192,7 @@ clusters
 ------service-account.yaml
 ------secret-enc.yaml
 ------keycloak.yaml
+------service.yaml
 ----keycloakdb
 ------namespace.yaml
 ------service-account.yaml
@@ -253,11 +255,114 @@ spec:
               containerPort: 7600
 
 ```
+
+Content of service.yaml
+```
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: keycloak
+  type: ClusterIP
+```
+
 FluxCD can deploy the reources once the changes are merged into the main branch. 
 
-## DNS changes
+## Integrating with other applications
 
-Now let's create a DNS entry to expose keycloak via ingressgateway.
+Based on our [architecture](../images/ex-offenders-platform.png) following endpoints are routed to auth-service
+
+```
+ex-offenders.co.uk/api/login
+ex-offenders.co.uk/api/register
+ex-offenders.co.uk/api/logout
+```
+Auth service is the interface to our keycloak deployment. 
+
+Let's expose those endpoints via Istio Ingressgateway, so that frontend can talk to.
+
+Please click [here](ingressgateway.md) to see how we have configured the gateway resource. 
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - '*'
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: ex-offenders-tls
+      hosts:
+      - "www.ex-offenders.co.uk"
+      - "ex-offenders.co.uk"
+```
+
+Now let's route those endpoints to auth-service
+
+Content of istio-system/virtual-services.yaml
+```
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: frontend
+  namespace: istio-system
+spec:
+  hosts:
+    - "www.ex-offenders.co.uk"
+    - "ex-offenders.co.uk"
+  gateways:
+    - gateway
+  http:
+    - route:
+        - destination:
+            host: auth-service.auth-service.svc.cluster.local
+            port:
+              number: 80
+      name: auth-service-route
+      match:
+      - uri:
+          prefix: "/api/login"
+      - uri:
+          prefix: "/api/logout"
+      - uri:
+          prefix: "/api/register"
+    - route:
+        - destination:
+            host: frontend.frontend.svc.cluster.local
+            port:
+              number: 80
+      name: frontend-route
+```
+Above virtual service routes the traffic with specified endpoints to auth-service service. Rest will be routed to the frontend deployment. 
+
+## Exposing keycloak to the outside world
+
+Now let's create a DNS entry to expose keycloak via ingressgateway. Please note that, ideally we do not want to expose our keycload deployment to the outside world. 
 
 Determine the ingressgateway public IP address. 
 
@@ -376,4 +481,4 @@ spec:
       - "keycloak.ex-offenders.co.uk"
 ```
 
-With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk. We will be adding URI prefixes to limit the exposed endpoints. 
+With the above change, we can access our keycloak via https://keycloak.ex-offenders.co.uk. 
