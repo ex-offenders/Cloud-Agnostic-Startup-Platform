@@ -31,3 +31,5 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 * Find me on [LinkedIn](https://www.linkedin.com/in/sajeeval)
 * Visit [Ex-Offenders](https://ex-offenders.co.uk) Platform. (Work in progress)
 
+## Invest
+We are presently self-funded and actively seeking investment opportunities. If our vision resonates with you, we'd appreciate the opportunity to discuss how you can contribute to our journey.
