@@ -278,91 +278,10 @@ spec:
 
 FluxCD can deploy the reources once the changes are merged into the main branch. 
 
-## Integrating with other applications
 
-Based on our [architecture](../images/ex-offenders-platform.png) following endpoints are routed to auth-service
+## Keycloak ingress
 
-```
-ex-offenders.co.uk/api/login
-ex-offenders.co.uk/api/register
-ex-offenders.co.uk/api/logout
-```
-Auth service is the interface to our keycloak deployment. 
-
-Let's expose those endpoints via Istio Ingressgateway, so that frontend can talk to.
-
-Please click [here](ingressgateway.md) to see how we have configured the gateway resource. 
-
-```
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: gateway
-  namespace: istio-system
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - '*'
-    - port:
-        number: 443
-        name: https
-        protocol: HTTPS
-      tls:
-        mode: SIMPLE
-        credentialName: ex-offenders-tls
-      hosts:
-      - "www.ex-offenders.co.uk"
-      - "ex-offenders.co.uk"
-```
-
-Now let's route those endpoints to auth-service
-
-Content of istio-system/virtual-services.yaml
-```
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: frontend
-  namespace: istio-system
-spec:
-  hosts:
-    - "www.ex-offenders.co.uk"
-    - "ex-offenders.co.uk"
-  gateways:
-    - gateway
-  http:
-    - route:
-        - destination:
-            host: auth-service.auth-service.svc.cluster.local
-            port:
-              number: 80
-      name: auth-service-route
-      match:
-      - uri:
-          prefix: "/api/login"
-      - uri:
-          prefix: "/api/logout"
-      - uri:
-          prefix: "/api/register"
-    - route:
-        - destination:
-            host: frontend.frontend.svc.cluster.local
-            port:
-              number: 80
-      name: frontend-route
-```
-Above virtual service routes the traffic with specified endpoints to auth-service service. Rest will be routed to the frontend deployment. 
-
-## Exposing keycloak to the outside world
-
-Now let's create a DNS entry to expose keycloak via ingressgateway. Please note that, ideally we do not want to expose our keycload deployment to the outside world. 
+Now let's create a DNS entry to expose keycloak via ingressgateway. 
 
 Determine the ingressgateway public IP address. 
 
@@ -377,7 +296,7 @@ keycloak.ex-offenders.co.uk -> 4.250.87.120
 
 ## Gateway changes
 
-Gateway still service http on port 80. 
+Gateway still serves http on port 80. 
 
 ```
 apiVersion: networking.istio.io/v1alpha3
