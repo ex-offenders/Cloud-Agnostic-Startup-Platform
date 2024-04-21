@@ -219,6 +219,8 @@ spec:
       labels:
         app: keycloak
     spec:
+      serviceAccountName: keycloak
+      automountServiceAccountToken: true
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:20.0.2
