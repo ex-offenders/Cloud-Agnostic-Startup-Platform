@@ -191,7 +191,113 @@ clusters
 ------imagerepositories
 --------bookinfo.yaml
 ```
+Content
+```
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: bookinfo
+  namespace: flux-system
+spec:
+  secretRef:
+    name: acr-secret
+  image: acr.ex-offenders.co.uk/bookinfo
+  interval: 5m
+```
 
+Now let's create an imagepolicy resource which defines rules for selecting a latest image from ImageRepositories. 
+Directory structure
+```
+clusters
+--production
+----flux-system
+------imagerepositories
+--------bookinfo.yaml
+------imagepolicies
+--------bookinfo.yaml
+```
+Content
+```
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: bookinfo
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: bookinfo
+  policy:
+    semver:
+      range: '>=1.0.0'
+```
+Next, let's define ImageUpdateAutomation resource which defines an automation process that will update a git repository, based on image policy objects in the same namespace. 
+Directory structure
+```
+clusters
+--production
+----flux-system
+------imagerepositories
+--------bookinfo.yaml
+------imagepolicies
+--------bookinfo.yaml
+----image-update-automation.yaml
+```
+Content
+```
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 30m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+      messageTemplate: '{{range .Updated.Images}}{{println .}}{{end}}'
+    push:
+      branch: main
+  update:
+    path: ./clusters/production
+    strategy: Setters
+```
+See the [docs](https://fluxcd.io/flux/components/image/imageupdateautomations/)
 
-The ImageRepository API defines a repository to scan and store a specific set of tags in a database.
+Finally we need to specify which specific location FluxCD should modify whenever a new image is available in remote image repository. We can do this by adding a comment to the deployment manifest. 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookinfo
+  namespace: bookinfo
+  labels:
+    app: bookinfo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookinfo
+  template:
+    metadata:
+      labels:
+        app: bookinfo
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: bookinfo
+      automountServiceAccountToken: true
+      containers:
+        - name: bookinfo
+          image: eocontainerregistry.azurecr.io/bookinfo:v1.1.1 # {"$imagepolicy": "flux-system:bookinfo"}
+          env:
+            - name: DB_HOST
+```
 
+Now, whenever a new image is pushed to the image repository, fluxcd will modify the image tag in the deployment manifest. This change will again reconciled by FluxCD and a new deployment will happen as part of Flux reconciliation process. 
