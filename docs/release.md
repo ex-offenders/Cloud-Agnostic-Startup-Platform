@@ -15,7 +15,7 @@ Semantic versioning (often abbreviated as SemVer) is a versioning scheme used in
 
 ## The repository
 
-Let's use our bookinfo node repository for our example. We already have package.json file at the root of the repository so that we can track our release version. If this is not a node repository, we can alternatively add a package.json file as follows
+Let's use our bookinfo node repository as the example. We already have package.json file at the root of the repository so that we can track our release version. If this is not a node repository, we can alternatively add a package.json file as follows
 ```
 {
   "name": "bookinfo",
