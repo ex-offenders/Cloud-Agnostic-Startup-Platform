@@ -66,9 +66,11 @@ feat: release process
 ```
 
 Once the above change is pushed into the main branch, release please will create a new PR to bump the version. 
+![Alt text](../images/release-please-pr.png?raw=true "Pull Request")
 
-Once the PR is merged, it will create a new release with the version v1.0.0
+Once the PR is merged, it will create a new release with the version v1.0.0.
 
+![Alt text](../images/release-please-version.png?raw=true "Version")
 
 Now, from this point onwards, release-please will honor our commit messages and it will create pull requests to bump the release version accordingly. 
 
@@ -116,6 +118,8 @@ workflows:
               only: /^v.*/
 ```
 So, this instructs CircleCI to build and push the image to our container registry, whenever a release is created. Please see CircleCI [docs](https://circleci.com/docs/variables/) to learn more about CircleCI built-in variable CIRCLE_TAG.
+
+![Alt text](../images/circleci-build-output.png?raw=true "Build Output")
 
 ## FluxCD image reflector and automation controllers
 
