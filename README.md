@@ -21,7 +21,8 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 10. [Keycloak, Istio and Let's Encrypt Certificate](docs/keycloak.md)
 11. [Authentication/Authorization with Keycloak and Istio](docs/requestauthentication.md)
 12. [MinIO Deployment - Our object storage](docs/minio.md)
-13. [Local Development Setup](docs/local.md)
+13. [Conventional Commits, Semantic Versioning and CircleCI](docs/release.md)
+14. [Local Development Setup](docs/local.md)
 
 ## Contributing
 
