@@ -74,4 +74,4 @@ Where
 
 ## Notes
 
-Please note that we changed our release process to use semantic versioning. See the [docs](release.md)
+Please note that we changed our release process later to use semantic versioning. See the [docs](release.md)
