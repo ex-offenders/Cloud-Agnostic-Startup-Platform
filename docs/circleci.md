@@ -71,3 +71,7 @@ Where
 3. **AZURE_ACR_LOGIN_SERVER** is the Azure Container Registry
 4. **CIRCLE_PROJECT_REPONAME** is a built-in environment variable. This is the name of the repository of the current project.
 5. **CIRCLE_SHA1** is a built-in environment variable. This is the SHA1 hash of the last commit of the current build
+
+## Notes
+
+Please note that we changed our release process to use semantic versioning. See the [docs](release.md)
