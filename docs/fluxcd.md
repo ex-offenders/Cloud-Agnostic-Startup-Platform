@@ -140,3 +140,5 @@ spec:
     name: notification-provider-slack
 ```
 That would be it. Now we should be able to see Flux notifications in #flux-notifications slack channel
+
+![Alt text](../images/flux-notifications.png?raw=true "Flux Notifications")
