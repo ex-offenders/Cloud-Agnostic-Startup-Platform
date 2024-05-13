@@ -1,6 +1,6 @@
 # Cloud-Agnostic Infrastructure on Kubernetes for a Startup Company
 
-As a startup ourselves, we're excited to share our tech stack built on Kubernetes. From initial setup to ongoing optimizations, we've documented our journey to provide insights for fellow startups. We welcome your feedback and contributions as we continue to refine our infrastructure. 
+As a startup ourselves, we're excited to share our tech stack built on Kubernetes. From initial setup to ongoing optimizations, we've documented our journey to provide insights for fellow startups. We welcome your feedback and contributions as we continue to refine our infrastructure. See this on [GitHub](https://github.com/ex-offenders/Cloud-Agnostic-Startup-Platform). 
 
 ## Motivation
 
@@ -26,7 +26,7 @@ As a startup, managing cloud costs constitutes a significant aspect of our finan
 
 ## Contributing
 
-* Please feel free to [contribute](https://github.com/ex-offenders/Cloud-Agnostic-Startup-Platform) in anyway you can. It would be great to have more cloud-agnostic technology guides so that startups can benefit.
+* Please feel free to [contribute](https://github.com/ex-offenders/Cloud-Agnostic-Startup-Platform) by adding more cloud-agnostic technology guides so that startups can benefit.
 
 ## Contact
 
