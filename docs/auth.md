@@ -201,5 +201,103 @@ spec:
 
 We also have a ClusterIP service with the selector "app=job-service." This configuration ensures that both job-service v1 and job-service v2 are added as endpoints of this service.
 
+```
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: job-service
+    kustomize.toolkit.fluxcd.io/name: flux-system
+    kustomize.toolkit.fluxcd.io/namespace: flux-system
+  name: job-service
+  namespace: job-service
+spec:
+  ports:
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: job-service
+  type: ClusterIP
+```
 
 Additionally, note that we are using the same database instance for both Keycloak and the job-service versions. However, the respective users are restricted from accessing each other's databases. This setup, despite sharing the same instance, effectively mimics a microservice architecture.
+
+For the first step, we want to route all traffic exclusively to the v1 deployment. (If you look at job-service v1, you'll see that it has been written without any authentication or authorization in the code. We plan to implement these features using Istio in the upcoming steps.)
+
+To achieve this, we create a virtual service and a destination rule as follows. 
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  hosts:
+    - "www.ex-offenders.co.uk"
+    - "ex-offenders.co.uk"
+    - job-service.job-service.svc.cluster.local
+  gateways:
+    - istio-system/gateway
+    - mesh
+  http:
+    - match:
+        - uri:
+            prefix: "/api/jobs"
+        - uri:
+            prefix: "/api/jobcategories"
+      route:
+        - destination:
+            host: job-service.job-service.svc.cluster.local
+            subset: v1
+          weight: 100
+        - destination:
+            host: job-service.job-service.svc.cluster.local
+            subset: v2
+          weight: 0
+```
+
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  host: job-service.job-service.svc.cluster.local
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+```
+Note that under the gateways section, we specify both our ingress gateway and "mesh." This is because we expect traffic from both the external gateway and other microservices within the cluster. Observe how we have directed 100% of the traffic to the v1 deployment.
+
+
+Below is Istio gateway resource. It handles traffic destined for the ex-offenders.co.uk domain. Additionally, we've attached a Let's Encrypt TLS certificate to the gateway using cert-manager.
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: ex-offenders-tls
+      hosts:
+      - "www.ex-offenders.co.uk"
+      - "ex-offenders.co.uk"
+      - "auth.ex-offenders.co.uk"
+```
