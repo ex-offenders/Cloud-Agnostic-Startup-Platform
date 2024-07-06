@@ -16,7 +16,8 @@ In this guide, we will explore how to leverage Istio to implement authentication
 6. Improving the Code with Additional Constraints
   6.1. Decoding the Token to get the Logged-in User
   6.2. Validate the Ownership of an Item
-7. Implementing Authorization with Istio
+7. Implementing Authorization with Istio (Based on Keycloak Roles)
+8. Implementing Authorization between Microservices
 
 
 ## Introduction to Keycloak
@@ -665,3 +666,36 @@ curl --location 'https://ex-offenders.co.uk/api/jobcategories/' \i/jobcategories
 {"name":"Research","id":20}
 ```
 As we can see, only admin users can create/update/delete job categories now. 
+
+## Implementing Authorization between MicroServices
+
+Now we add another microservice called "job-notification-service". 
+![Alt text](../images/job-notification-service.png?raw=true "JobNotificationService")
+
+This service is not exposed via the gateway and should be accessible only by "job-service". To achieve this, we can add the following authorization policy.
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: job-notification-service
+  namespace: job-notification-service
+spec:
+  selector:
+    matchLabels:
+      app: job-notification-service
+  rules:
+  - from:
+    - source:
+        namespaces: ["job-service"]
+        principals: ["cluster.local/ns/job-service/sa/job-service"]
+```
+## Conclusion
+
+In conclusion, we have implemented authentication and authorization for our microservices using Istio and Keycloak, ensuring secure access to resources. We've configured policies to control access based on roles and user identities, enhancing the overall security posture of our applications.
+
+I welcome any feedback you may have regarding areas for improvement, any aspects that may have been overlooked, or suggestions to enhance this document. 
+
+
+
+
