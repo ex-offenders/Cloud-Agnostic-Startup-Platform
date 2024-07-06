@@ -90,17 +90,17 @@ spec:
 ```
 Notice FluxCD `imagepolicy` reference in the manifest file. With this, we can automate the deployment whenever a new image is available in the image repository. 
 
-# Introduction to Istio
+## Introduction to Istio
 
 Istio is an open-source service mesh platform designed to manage how microservices communicate and share data. It provides a variety of features to improve the observability, security, and management of microservice applications. We will soon discuss how we have configured Istio.
 
-# Introduction to FastAPI
+## Introduction to FastAPI
 
 FastAPI is a modern Python framework that is rapidly gaining popularity. It is designed for rapid development and to maximize the developer experience. In this example, we will use two versions of a job API ([V1](https://github.com/ex-offenders/job-service-v1),  [V2](https://github.com/ex-offenders/job-service-v2),) written in FastAPI. The API utilizes the SQLModel library to interact with the backend database, combining features from both SQLAlchemy and Pydantic. 
 
 SQLModel is developed by the same author as FastAPI.
 
-# Deploying job-service without Authentication and Authorization
+## Deploying job-service without Authentication and Authorization
 
 Let's start with something simpler: a working microservice without any authentication or authorization. 
 
@@ -597,4 +597,48 @@ curl --location --request PATCH 'https://ex-offenders.co.uk/api/jobs/2f736c4d-11
 ```
 As you can see, we are unable to modify jobs owned by someone else.
 
+## Implementing Authorization with Istio
 
+At this point, we have configured authentication. When it comes to job categories, we do not expect a large number to be present in the database. It makes sense to maintain a limited number of job categories and restrict creation, modification, and deletion to admin users only.
+
+Currently, anyone with valid authentication can modify job categories. Let's see how we can implement authorization.
+
+We modify our authorization policy to ensure that only users with the admin role can modify job categories. Alternatively, you can use "groups" if you have a more complex user hierarchy.
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  selector:
+    matchLabels:
+      app: job-service
+  rules:
+  - to:
+    - operation:
+        methods: ["GET"]
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+    to:
+    - operation:
+        methods: ["POST", "DELETE", "PATCH"]
+        paths: ["/api/jobs*"]
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+    when:
+    - key: request.auth.claims[realm_access][roles]
+      values: ["admin"]
+    to:
+    - operation:
+        methods: ["POST", "DELETE", "PATCH"]
+        paths: ["/api/jobcategories*"]
+```
+We can create the admin role by navigating to "Realm Roles" under the Keycloak realm we use. After that, we go to the respective user we want to assign the admin role to, click on the "Role Mapping" tab, and add the user to the newly created "admin" role.
+
+![Alt text](../images/realm-roles.png?raw=true "RealmRoles")
+
+![Alt text](../images/role-mapping.png?raw=true "RoleMapping")
