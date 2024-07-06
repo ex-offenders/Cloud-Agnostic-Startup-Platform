@@ -10,12 +10,14 @@ In this guide, we will explore how to leverage Istio to implement authentication
 2. Introduction to Istio
 3. Introduction to FastAPI
 4. Deploying the job-service Microservice without Authentication and Authorization
-5. Istio Weight-Based Traffic Routing between job-service-v1 and job-service-v2
-6. Implementing Authentication with Istio
-7. Passing the JWT Token to Backend Services
-8. Implementing Authorization with Istio
-9. Checking the Ownership of an Item
-10. Decoding the Token
+  4.1. Istio Weight-Based Traffic Routing between job-service-v1 and job-service-v2
+5. Implementing Authentication with Istio
+  5.1. Passing the JWT Token to Backend Services
+6. Improving the Code with Additional Constraints
+  6.1. Decoding the Token to get the Logged-in User
+  6.2. Validate the Ownership of an Item
+7. Implementing Authorization with Istio
+
 
 ## Introduction to Keycloak
 
@@ -344,6 +346,7 @@ Note: I used Swagger, which is integrated with FastAPI, to generate the sample c
 
 Also, please note that when creating new jobs, we manually pass the `owner_id` with the request. Ideally, this should be the user ID of the logged-in user. We will delve further into this when discussing job-service v2.
 
+## Implementing Authentication with Istio
 
 Let's secure our endpoints.
 
@@ -477,3 +480,58 @@ curl --location 'https://ex-offenders.co.uk/api/jobs/' \
 ```
 As demonstrated, authenticated users are able to successfully add, modify, or delete jobs and job categories.
 
+## Improving the Code with Additional Constraints
+
+At this point, if you examine the source code of ([job-service-v1](https://github.com/ex-offenders/job-service-v1), you'll notice it focuses solely on core functionality without incorporating authentication and authorization concerns, which are managed entirely by Istio. However, this approach has some drawbacks. 
+
+We currently need to manually provide the owner_id when creating a job, whereas ideally, this should be automatically set to the ID of the logged-in user. Moreover, a user should not have the ability to modify a job created by someone else. This necessitates that the backend service is aware of the logged-in user's ID and can enforce this constraint. We have addressed these issues in the [v2 service](https://github.com/ex-offenders/job-service-v2). Please see the implementation here.
+
+#### Populate owner_id during job creation
+
+
+```
+@router.post("/", response_model=JobPublic)
+def create_job(*, session: Session = Depends(get_session), job: JobCreate, request: Request, user_id: str = Depends(get_user_id_from_token)):
+    db_job = Job.model_validate(job)
+    db_job.id = str(uuid.uuid4())
+    db_job.owner_id = user_id
+    session.add(db_job)
+    session.commit()
+    session.refresh(db_job)
+    
+    return db_job
+```
+In this post method, we have included `get_user_id_from_token` as a dependency to inject the `user_id` into `owner_id` during job creation.
+
+```
+def get_user_id_from_token(request: Request) -> str:
+    try:
+        token = request.headers.get("Authorization").split("Bearer ")[1]
+        payload = jwt.decode(token, options={"verify_signature": False})
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="User ID not found in token")
+        return user_id
+    except:
+        raise HTTPException(status_code=401, detail="Could not validate credentials")
+```
+
+#### Validate the ownership
+
+In the following PATCH method, we validate whether the job is owned by the logged-in user. If not, the user is not allowed to modify the job.
+
+```
+@router.patch("/{job_id}", response_model=JobPublic)
+def update_job(*, session: Session = Depends(get_session), job_id: str, job: JobUpdate, request: Request, user_id: str = Depends(get_user_id_from_token)):
+    db_job = session.get(Job, job_id)
+    if not db_job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    if db_job.owner_id != user_id:
+        raise HTTPException(status_code=403, detail="You do not have permission to update this job")
+    job_data = job.model_dump(exclude_unset=True)
+    db_job.sqlmodel_update(job_data)
+    session.add(db_job)
+    session.commit()
+    session.refresh(db_job)
+    return db_job
+```
