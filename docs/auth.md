@@ -345,3 +345,58 @@ Note: I used Swagger, which is integrated with FastAPI, to generate the sample c
 Also, please note that when creating new jobs, we manually pass the `owner_id` with the request. Ideally, this should be the user ID of the logged-in user. We will delve further into this when discussing job-service v2.
 
 
+Let's secure our endpoints.
+
+Firstly, let's add the RequestAuthentication resource, which defines the supported request authentications for the workload. This configuration ensures that Istio rejects any request with invalid authentication information. Below, we have defined our Keycloak issuer URL and public certificate URL to enable Istio to verify the token signature.
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  selector:
+     matchLabels:
+      app: job-service
+  jwtRules:
+   - issuer: "https://auth.ex-offenders.co.uk/realms/ex-offenders"
+     jwksUri: "https://auth.ex-offenders.co.uk/realms/ex-offenders/protocol/openid-connect/certs"
+     forwardOriginalToken: true
+```
+
+Additionally, we have set "forwardOriginalToken": true, as we need to pass the token in the format "Authorization: Bearer <token>" to the backend service. You can also pass the token to the backend service under a custom header name. For instance, you can use the following code snippet to pass the token as a value of the key "jwt_parsed":
+```
+   jwtRules:
+    - issuer: "https://auth.ex-offenders.co.uk/realms/ex-offenders"
+      jwksUri: "https://auth.ex-offenders.co.uk/realms/ex-offenders/protocol/openid-connect/certs"
+      outputPayloadToHeader: jwt-parsed
+```
+
+Now, RequestAuthentication will reject any request with an invalid token. However, requests without any authentication information will still be accepted, but they won't have an authenticated identity. To handle these cases, in addition to RequestAuthentication, we need to drop requests that lack an authentication identity. Therefore, we add an authorization policy as follows:
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  selector:
+    matchLabels:
+       app: job-service
+  rules:
+  - to:
+    - operation:
+        methods: ["GET"]
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+    to:
+    - operation:
+        methods: ["POST", "DELETE", "PATCH"]
+        paths: ["/api/jobs*"]
+    - operation:
+        methods: ["POST", "DELETE", "PATCH"]
+        paths: ["/api/jobcategories*"]
+```
