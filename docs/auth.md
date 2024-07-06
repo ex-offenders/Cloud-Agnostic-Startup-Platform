@@ -701,6 +701,6 @@ In conclusion, we have implemented authentication and authorization for our micr
 
 I welcome any feedback you may have regarding areas for improvement, any aspects that may have been overlooked, or suggestions to enhance this document. 
 
-
+Note: This page is part of Cloud Agnostic Platform guide. Click [here](https://github.com/ex-offenders/Cloud-Agnostic-Startup-Platform/tree/main) to access the main page.
 
 
