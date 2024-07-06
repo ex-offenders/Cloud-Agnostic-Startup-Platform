@@ -10,14 +10,15 @@ In this guide, we will explore how to leverage Istio to implement authentication
 2. Introduction to Istio
 3. Introduction to FastAPI
 4. Deploying the job-service Microservice without Authentication and Authorization
-  4.1. Istio Weight-Based Traffic Routing between job-service-v1 and job-service-v2
+   - Istio Weight-Based Traffic Routing between job-service-v1 and job-service-v2
 5. Implementing Authentication with Istio
-  5.1. Passing the JWT Token to Backend Services
+   - Passing the JWT Token to Backend Services
 6. Improving the Code with Additional Constraints
-  6.1. Decoding the Token to get the Logged-in User
-  6.2. Validate the Ownership of an Item
+   - Decoding the Token to get the Logged-in User
+   - Validate the Ownership of an Item
 7. Implementing Authorization with Istio (Based on Keycloak Roles)
 8. Implementing Authorization between Microservices
+
 
 
 ## Introduction to Keycloak
