@@ -642,3 +642,26 @@ We can create the admin role by navigating to "Realm Roles" under the Keycloak r
 ![Alt text](../images/realm-roles.png?raw=true "RealmRoles")
 
 ![Alt text](../images/role-mapping.png?raw=true "RoleMapping")
+
+#### Creating a Job Category - Regular User
+```
+curl --location 'https://ex-offenders.co.uk/api/jobcategories/' \location 'https://ex-offenders.co.uk/api/jobcategories/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <token>' \
+--data '{
+    "name": "Research"
+}'
+RBAC: access denied
+```
+
+#### Creating a Job Category - Admin User
+```
+curl --location 'https://ex-offenders.co.uk/api/jobcategories/' \i/jobcategories/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <token>' \
+--data '{
+    "name": "Research"
+}'
+{"name":"Research","id":20}
+```
+As we can see, only admin users can create/update/delete job categories now. 
