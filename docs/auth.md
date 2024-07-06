@@ -305,6 +305,10 @@ spec:
       - "ex-offenders.co.uk"
       - "auth.ex-offenders.co.uk"
 ```
+We can use Kiali dashboard to validate our routing configuration. Note that, `job-service` connects to the same `keycloakdb` MySQL instance. But in reality, `job-service` has access only to it's specific `job-service` database inside the instance. 
+
+![Alt text](../images/kiali.png?raw=true "Routing")
+
 Now we are ready to do some testing. 
 
 #### Creating a new job category
