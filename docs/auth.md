@@ -1,7 +1,9 @@
 # Authentication and Authorization with Istio and Keycloak
 
 In this guide, we will explore how to leverage Istio to implement authentication and authorization using Keycloak. The goal is to simplify development, allowing developers to focus on their core tasks without worrying about authentication and authorization. We will cover this step-by-step with practical examples and working sample codes.
-<image>
+
+![Alt text](images/auth.png?raw=true "Mesh")
+
 ## Contents
 
 1. Introduction to Keycloak
