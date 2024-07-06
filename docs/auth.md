@@ -301,3 +301,47 @@ spec:
       - "ex-offenders.co.uk"
       - "auth.ex-offenders.co.uk"
 ```
+Now we are ready to do some testing. 
+
+#### Creating a new job category
+```
+ curl --location 'https://ex-offenders.co.uk/api/jobcategories/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "Information Technology"
+}'
+{"name":"Information Technology","id":17}
+```
+
+#### Creating a new job
+```
+curl --location 'https://ex-offenders.co.uk/api/jobs/' \ 'https://ex-offenders.co.uk/api/jobs/' \
+--header 'Content-Type: application/json' \
+--data '{
+  "title": "Software Engineer",
+  "description": "Software Engineer with 2 years of experience",
+  "owner_id": "5690cc29-5008-4a81-8f08-db92e01d6d44",
+  "category_id": 17
+}'
+{"title":"Software Engineer","description":"Software Engineer with 2 years of experience","owner_id":"5690cc29-5008-4a81-8f08-db92e01d6d44","category_id":17,"id":"f19e68da-e40a-4954-9dbf-6dfaf1f7f4d4"}
+```
+#### Get job category by ID
+
+```
+curl --location 'https://ex-offenders.co.uk/api/jobcategories/17'
+{"name":"Information Technology","id":17}
+```
+
+#### Get job by ID
+```
+curl --location 'https://ex-offenders.co.uk/api/jobs/bff285f6-34f6-4c5f-9619-2e860bec2d87'
+{"title":"Software Engineer","description":"Software Engineer with 2 years of experience","owner_id":"5690cc29-5008-4a81-8f08-db92e01d6d44","category_id":17,"id":"bff285f6-34f6-4c5f-9619-2e860bec2d87"}
+```
+
+As you can see, there is no authentication or authorization on these endpoints. Anyone can create, update, delete, or retrieve jobs and job categories.
+
+Note: I used Swagger, which is integrated with FastAPI, to generate the sample curl requests.
+
+Also, please note that when creating new jobs, we manually pass the `owner_id` with the request. Ideally, this should be the user ID of the logged-in user. We will delve further into this when discussing job-service v2.
+
+
