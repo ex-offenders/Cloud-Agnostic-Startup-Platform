@@ -400,3 +400,80 @@ spec:
         methods: ["POST", "DELETE", "PATCH"]
         paths: ["/api/jobcategories*"]
 ```
+
+So, with the above AuthorizationPolicy, we have allowed unrestricted access to the GET method for anyone. However, authentication is required for any other methods on the job and jobcategory endpoints.
+
+Let's test some endpoints:
+
+#### Creating a new job
+```
+curl --location 'https://ex-offenders.co.uk/api/jobs/' \
+--header 'Content-Type: application/json' \
+--data '{
+  "title": "Software Engineer II",
+  "description": "Software Engineer with 2 years of experience",
+  "owner_id": "5690cc29-5008-4a81-8f08-db92e01d6d44",
+  "category_id": 17
+}'
+RBAC: access denied
+```
+
+#### Get job by ID
+```
+curl --location 'https://ex-offenders.co.uk/api/jobs/bff285f6-34f6-4c5f-9619-2e860bec2d87'
+{"title":"Software Engineer","description":"Software Engineer with 2 years of experience","owner_id":"5690cc29-5008-4a81-8f08-db92e01d6d44","category_id":17,"id":"bff285f6-34f6-4c5f-9619-2e860bec2d87"}
+```
+#### Creating a new job category
+```
+ curl --location 'https://ex-offenders.co.uk/api/jobcategories/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "Computer Science"
+}'
+RBAC: access denied
+```
+
+#### Get job category by ID
+
+```
+curl --location 'https://ex-offenders.co.uk/api/jobcategories/17'
+{"name":"Information Technology","id":17}
+```
+
+As observed, we can retrieve information without authentication. However, authentication is necessary for adding, modifying, or deleting entries.
+
+Next, let's generate a token by calling the Keycloak token URL and use it to perform add, modify, or delete operations:
+
+#### Generating a token
+```
+curl --location 'https://auth.ex-offenders.co.uk/realms/ex-offenders/protocol/openid-connect/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'client_id=ex-offenders-platform' \
+--data-urlencode 'username=<username>' \
+--data-urlencode 'password=<password>'
+```
+This returns an access token, which we can use for subsequent requests. 
+
+#### Creating a new job
+```
+curl --location 'https://ex-offenders.co.uk/api/jobs/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <token>' \
+--data '{
+  "title": "Software Engineer II",
+  "description": "Software Engineer with 2 years of experience",
+  "owner_id": "5690cc29-5008-4a81-8f08-db92e01d6d44",
+  "category_id": 17
+}'
+
+{
+    "title": "Software Engineer II",
+    "description": "Software Engineer with 2 years of experience",
+    "owner_id": "5690cc29-5008-4a81-8f08-db92e01d6d44",
+    "category_id": 17,
+    "id": "571c9ce6-566f-4e57-a780-9af5275ce5ef"
+}
+```
+As demonstrated, authenticated users are able to successfully add, modify, or delete jobs and job categories.
+
