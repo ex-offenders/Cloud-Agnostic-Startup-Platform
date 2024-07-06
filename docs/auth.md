@@ -535,3 +535,66 @@ def update_job(*, session: Session = Depends(get_session), job_id: str, job: Job
     session.refresh(db_job)
     return db_job
 ```
+
+Let's route all traffic to job-service v2. We can achieve this by modifying the virtual service.
+```
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: job-service
+  namespace: job-service
+spec:
+  hosts:
+    - "www.ex-offenders.co.uk"
+    - "ex-offenders.co.uk"
+    - job-service.job-service.svc.cluster.local
+  gateways:
+    - istio-system/gateway
+    - mesh
+  http:
+    - match:
+        - uri:
+            prefix: "/api/jobs"
+        - uri:
+            prefix: "/api/jobcategories"
+      route:
+        - destination:
+            host: job-service.job-service.svc.cluster.local
+            subset: v1
+          weight: 0
+        - destination:
+            host: job-service.job-service.svc.cluster.local
+            subset: v2
+          weight: 100
+```
+Now, Let's try to create a job without `owner_id`. Please note that, now `JobCreate` data model no longer has `owner_id` attribute. 
+
+```
+ curl --location 'https://ex-offenders.co.uk/api/jobs/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <token>' \
+--data '{
+  "title": "Software Engineer III",
+  "description": "Software Engineer with 2 years of experience",
+  "category_id": 17
+}'
+{"title":"Software Engineer III","description":"Software Engineer with 2 years of experience","category_id":17,"id":"b3b1baa8-91bc-42bd-9736-94f13b39b610","owner_id":"78de9a7a-7bcb-4b61-9c27-478704a1986a"}
+```
+As you can see, we do not require to specify the `owner_id`. FastAPI automatically inject the ID of the logged-in user. 
+
+Let's try to modify a job 
+
+Let's attempt to modify a job owned by someone else.
+
+```
+curl --location --request PATCH 'https://ex-offenders.co.uk/api/jobs/2f736c4d-11ba-421f-953a-d1d6f0e5b653' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <token>' \
+--data '{
+  "title": "Software Engineer IV"
+}'
+{"detail":"You do not have permission to update this job"}
+```
+As you can see, we are unable to modify jobs owned by someone else.
+
+
