@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Local Development Setup
 
 We initially started using minikube as the local development environment but we later realised that it adds an extra layer of complexity to our developers. Therefore we resorted to a setup powered by docker-compose. 
