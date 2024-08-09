@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Keycloak Deployment
 
 Keycloak is an open-source identity and access management solution that enables secure authentication, authorization, and single sign-on for web applications and services. This document describes how we have deployed keycloak on kubernetes cluster and how we can expose it via Istio ingressgateway. Ideally this should sit inside the cluster with no public access. 
