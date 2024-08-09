@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Configuring Istio IngressGatway with Let's Encrypt Certificate
 
 Now let's jump into the interesting bit. Let's create a sample nginx deployment and expose it through Istio Ingressgateway over TLS. 
