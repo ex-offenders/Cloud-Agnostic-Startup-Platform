@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Monitoring Tools
 
 Monitoring Tools Installation:

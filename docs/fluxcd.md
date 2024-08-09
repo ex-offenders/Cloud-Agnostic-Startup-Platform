@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # FluxCD Installation
 
 [FluxCD](https://fluxcd.io/) is a continuous delivery tool that automates the deployment and lifecycle management of applications on Kubernetes. It uses GitOps principles to synchronize application code stored in Git repositories with Kubernetes clusters, ensuring consistency and reliability in the deployment process. 

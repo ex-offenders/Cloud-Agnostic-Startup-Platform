@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Conventional Commits, Semantic Versioning and CircleCI
 
 This document describes how we have implemented the release process. This is a combination of following standards/conventions/technologies.

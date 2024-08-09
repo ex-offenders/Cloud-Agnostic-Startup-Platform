@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Cert Manager
 Cert manager is a Kubernetes native certificate management controller. It can automatically provision, manage and renew TLS certificates from various certificate authorities (CA). We have configured cert-manager to obtain Let's encrypt certificates for our public endpoints. 
 

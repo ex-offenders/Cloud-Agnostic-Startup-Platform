@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Request Authentication with Istio and Keycloak
 
 RequestAuthentication defines what request request authentication methods are supported by a workload. Please see [this](https://istio.io/latest/docs/reference/config/security/request_authentication/)

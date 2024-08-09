@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Helm Repositores
 In FluxCD, HelmRepositories is a custom resource definition (CRD) used to manage Helm repositories. Helm repositories are collections of Helm charts, which are packages of pre-configured Kubernetes resources. By defining a Helm repository using HelmRepositories, FluxCD can access and sync Helm charts from that repository into your Kubernetes cluster.
 

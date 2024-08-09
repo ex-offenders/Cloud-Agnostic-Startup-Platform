@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Sealed Secrets
 Sealed Secrets is a Kubernetes tool that enhances security by enabling the encryption of Kubernetes Secrets at rest in a Git repository. It allows users to commit encrypted versions of their Secrets to source control while still maintaining the ability to decrypt and use them within the Kubernetes cluster. Sealed Secrets employs public-key cryptography, where the cluster holds the public key, enabling it to encrypt Secrets, while a client tool called "kubeseal" uses a private key to decrypt the Secrets for use within the cluster. This approach ensures that sensitive information, such as passwords or API keys, remains secure even when stored in version control.
 
