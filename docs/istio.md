@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # Istio
 
 Istio is an open-source service mesh platform that provides a uniform way to connect, manage, and secure microservices. It allows you to connect, secure, control, and observe microservices, regardless of the underlying infrastructure. Istio extends the capabilities of Kubernetes to manage and orchestrate microservices by adding features like traffic management, security, policy enforcement, and telemetry.
