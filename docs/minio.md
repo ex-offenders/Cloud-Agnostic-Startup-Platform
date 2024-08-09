@@ -1,3 +1,4 @@
+[![Alt text](../images/deprecated.png?raw=true "Deprecated")](https://docs.kubeflex.io)
 # MinIO Deployment
 MinIO is a high-performance, S3 compatible object store. This gives us the flexibility to move our object storage to any cloud provider in the future. 
 
